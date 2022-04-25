@@ -15,7 +15,7 @@ const nodemailer = require("nodemailer");
 const cors = require("cors");
 app.use(
   cors({
-      origin: "*"
+      origin: "https://asdyyu.herokuapp.com"
       // "http://127.0.0.1:5502",
       // methods: ["GET", "POST", "PUT", "DELETE"]
   })
@@ -211,8 +211,8 @@ app.post('/forgotPassword',
                 from: '"The File Server" <info@fileserver.com>', // sender address
                 to: `${email}`, // list of receivers
                 subject: "Reset Password", // Subject line
-                text: `Copy and paste http://127.0.0.1:5501/templates/resetpassword.html?email=${email} into your browser in order to rest your password`, // plain text body
-                // html: `<p>Highlight the link below and click "go to to http://localhost:8080/ResetPassword?email=${email}" to reset your password</p> </br> <a>http://localhost:8080/ResetPassword</a>`, // html body
+                text: `Copy and paste https://asdyyu.herokuapp.com/templates/resetpassword.html?email=${email} into your browser in order to rest your password`, // plain text body
+                
               };
               // send mail with defined transport object
               let info = await transporter.sendMail(msg);
