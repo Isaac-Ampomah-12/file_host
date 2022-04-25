@@ -8,13 +8,13 @@ $("#sign_up").click((e) => {
     }
     // console.log(signupInfo);
     $.ajax({
-        url: 'http://localhost:8080/signUp',
+        url: 'https://fileserverapi.herokuapp.com/signUp',
         type: 'POST',
         data: JSON.stringify(signupInfo),
         dataType: 'json',
         contentType: "application/json",
         success: (users) => {
-            window.location.href = `http://127.0.0.1:5501/index.html`;
+            window.location.href = `https://asdyyu.herokuapp.com/index.html`;
             alert("Account Created. You can now login");
             
             // console.log(result);

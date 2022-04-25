@@ -31,7 +31,7 @@ $(document).ready(function () {
         
     // }
     $.ajax({
-        url: 'http://localhost:8080/allFiles',
+        url: 'https://fileserverapi.herokuapp.com/allFiles',
         type: 'GET',
         success: function(files) {
             console.log(files);
@@ -67,7 +67,7 @@ $('#search_btn').click(function (e) {
     }
     $("#grid").html("");
     $.ajax({
-        url: 'http://localhost:8080/fileSearch',
+        url: 'https://fileserverapi.herokuapp.com/fileSearch',
         type: 'POST',
         data: JSON.stringify(searchInfo),
         dataType: 'json',
@@ -104,7 +104,7 @@ $('#search_btn').click(function (e) {
     })
 });
 
-// send file to email
+// email count
 const fileEmailCount = (click_id) => {
     let fileId = click_id.split("_")[2];
     // console.log(fileId);
@@ -114,7 +114,7 @@ const fileEmailCount = (click_id) => {
     }
 
     $.ajax({
-        url: 'http://localhost:8080/fileEmailCount',
+        url: 'https://fileserverapi.herokuapp.com/fileEmailCount',
         type: 'POST',
         data: JSON.stringify(countInput),
         dataType: 'json',
@@ -146,7 +146,7 @@ const fileToEmail = (click_id) => {
     
     console.log(emailInfo);
     $.ajax({
-        url: 'http://localhost:8080/fileEmail',
+        url: 'https://fileserverapi.herokuapp.com/fileEmail',
         type: 'POST',
         data: JSON.stringify(emailInfo),
         dataType: 'json',
@@ -164,12 +164,12 @@ const fileToEmail = (click_id) => {
 
 }
 
-
+//download a file
 const download = (click_id) => {
     let filefile = click_id;
     console.log(filefile);
 
-    window.location.href = `http://localhost:8080/fileDownload?fileName=${filefile}`;
+    window.location.href = `https://fileserverapi.herokuapp.com/fileDownload?fileName=${filefile}`;
 
     // let recepientEmail = prompt("Receipient email");
     // console.log(recepientEmail);
@@ -220,7 +220,7 @@ $('#upload_btn').click(function (e) {
     form_data.append("description",description);
 
     $.ajax({
-        url: 'http://localhost:8080/fileUpload',
+        url: 'https://fileserverapi.herokuapp.com/fileUpload',
         type: 'POST',
         dataType: 'script',
         Cache: false,
@@ -260,5 +260,5 @@ $('#upload_btn').click(function (e) {
     })
 });
 
-// fileEmailCOunt
+
 

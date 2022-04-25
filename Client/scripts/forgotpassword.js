@@ -8,7 +8,7 @@ $("#forgotPassword_btn").click((e) => {
     console.log(forgotInfo);
     // console.log(loginInfo);
     $.ajax({
-        url: 'http://localhost:8080/forgotPassword/',
+        url: 'https://fileserverapi.herokuapp.comforgotPassword/',
         type: 'POST',
         data: JSON.stringify(forgotInfo),
         dataType: 'json',

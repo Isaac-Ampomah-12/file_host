@@ -22,13 +22,13 @@ $("#reset_password_btn").click((e) => {
         }
         console.log(resetInfo);
             $.ajax({
-        url: 'http://localhost:8080/resetPassword',
+        url: 'https://fileserverapi.herokuapp.com/resetPassword',
         type: 'POST',
         data: JSON.stringify(resetInfo),
         dataType: 'json',
         contentType: "application/json",
         success: (users) => {
-            window.location.href = `http://127.0.0.1:5501/index.html`;
+            window.location.href = `https://asdyyu.herokuapp.com/index.html`;
             alert("Password Reset Successful. You can now login");
             // console.log(users);
             // alert("Password Reset was Successful");

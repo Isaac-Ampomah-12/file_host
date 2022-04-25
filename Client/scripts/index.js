@@ -17,7 +17,7 @@ $("#login_btn").click((e) => {
             if (users.length !== 0){
                 users.forEach(user => {
                 console.log(user.userRole);
-                window.location.href = `http://127.0.0.1:5501/templates/feed.html?userRole=${user.userRole}`;
+                window.location.href = `https://asdyyu.herokuapp.com/templates/feed.html?userRole=${user.userRole}`;
                 });
             } else {
                 alert("Invalid User");
