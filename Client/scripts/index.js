@@ -7,7 +7,7 @@ $("#login_btn").click((e) => {
     }
     // console.log(loginInfo);
     $.ajax({
-        url: 'http://localhost:8080/login',
+        url: 'https://fileserverapi.herokuapp.com/login',
         type: 'POST',
         data: JSON.stringify(loginInfo),
         dataType: 'json',
