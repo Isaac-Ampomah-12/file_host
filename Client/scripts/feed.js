@@ -41,11 +41,11 @@ $(document).ready(function () {
                 gridContent = `
                 <div id="row" class="row">
                     <div id="action_field" class="action_field">
-                    <b id="${file.fileName}" class="download_btn" onclick="download(this.id)">Download</b>
+                    <b id="${file.fileId}" class="download_btn" onclick="download(this.id)">Download</b>
                     <b id="${file.fileId}" class="send_email" onclick="fileToEmail(this.id)">Email</b>
                     </div>
                     <div id="title_field" class="title_field">${file.title}</div>
-                    <div id="file_name_${file.fileId}" onclick="fileEmailCount(this.id)" class="file_name_field">${file.fileName}</div>
+                    <div id="file_name_${file.fileId}" onclick="DownloadEmailCount(this.id)" class="file_name_field">${file.fileName}</div>
                     <div id="description_field" class="description_field">${file.description}</div>
                 </div>
                 `;
@@ -85,7 +85,7 @@ $('#search_btn').click(function (e) {
                         <div id="action_field" class="action_field"><p id="download_btn${file.fileId}" class="download_btn">Download</p>
                         <p id="${file.fileId}" class="send_email" onclick="fileToEmail(this.id)">Email</p></div>
                         <div id="title_field" class="title_field">${file.title}</div>
-                        <div id="file_name_field" class="file_name_field" onclick="fileEmailCount(this.id)">${file.fileName}</div>
+                        <div id="file_name_field" class="file_name_field" onclick="fileDownloadEmailCount(this.id)">${file.fileName}</div>
                         <div id="description_field" class="description_field">${file.description}</div>
                     </div>
                     `;
@@ -104,11 +104,11 @@ $('#search_btn').click(function (e) {
     })
 });
 
-// email count
-const fileEmailCount = (click_id) => {
+// count the number of times a file has been downloaded and send to an email
+const DownloadEmailCount = (click_id) => {
     let fileId = click_id.split("_")[2];
     // console.log(fileId);
-
+    console.log("here")
     let countInput = {
         fileId : fileId
     }
@@ -120,8 +120,11 @@ const fileEmailCount = (click_id) => {
         dataType: 'json',
         contentType: "application/json",
         success: (result) => {
-            console.log(result);
-            if(result) alert("Email Count = " + result.fileCount);
+            console.log(result[0].emailCount);
+            let emailCount = result[0].emailCount
+            let downloadCount = result[1].downloadCount
+
+            alert(`Email Count = ${emailCount} \nDownload Count = ${downloadCount}`);
            
         },
         error: (err) => {
@@ -166,10 +169,16 @@ const fileToEmail = (click_id) => {
 
 //download a file
 const download = (click_id) => {
-    let filefile = click_id;
-    console.log(filefile);
 
-    window.location.href = `https://fileserverapi.herokuapp.com/fileDownload?fileName=${filefile}`;
+    let fileId = click_id;
+    let fileName = $(`#file_name_${fileId}`).text();
+    console.log(fileId);
+    console.log(fileName);
+
+    // let filefile = click_id;
+    // console.log(filefile);
+
+    window.location.href = `https://fileserverapi.herokuapp.com/fileDownload?fileName=${fileName}&fileId=${fileId}`;
 
     // let recepientEmail = prompt("Receipient email");
     // console.log(recepientEmail);
@@ -201,63 +210,85 @@ const download = (click_id) => {
 
 
 //Upload a file
-$('#upload_btn').click(function (e) {
+$('#upload_form').submit(function (e) {
     e.preventDefault();
-    // let fileInfo = {
-    //     "title": $('#title').val(),
-    //     "description": $('#description').val(),
-    //     "upload": $('#file').val(),
-
-
-    // };
-
-    var title =  $('#title').val();
-    var description =  $('#description').val();
-    var file_data =  $('#file').prop('files')[0];
-    var form_data = new FormData();
-    form_data.append("file", file_data);
-    form_data.append("title",title);
-    form_data.append("description",description);
+    const form_data = new FormData(upload_form);
 
     $.ajax({
         url: 'https://fileserverapi.herokuapp.com/fileUpload',
         type: 'POST',
-        dataType: 'script',
-        Cache: false,
+
+        cache: false,
+        // "multipart/form-data",
         contentType: false,
         processData: false,
         data: form_data,
+        enctype: 'multipart/form-data',
         
-        // url: 'http://localhost:8080/fileUpload',
-        // type: 'POST',
-        // data: JSON.stringify(fileInfo),
-        // dataType: 'json',
-        // contentType: "application/json",
         success: function(files) {
-            if (files.length !== 0) {
-                console.log(files);
-                let grid = $('#grid');
-                let gridContent = "";
-                files.forEach(file => {
-                    gridContent = `
-                    <div id="row" class="row">
-                        <div id="action_field" class="action_field"><p id="download_btn${file.fileId}" class="download_btn">Download</p><p id="send_email${file.fileId}" class="send_email">Email</p></div>
-                        <div id="title_field" class="title_field">${file.title}</div>
-                        <div id="file_name_field" class="file_name_field">${file.fileName}</div>
-                        <div id="description_field" class="description_field">${file.description}</div>
-                    </div>
-                    `;
-                    grid.append(gridContent);
-                });
-            }else{
-                alert("No such FIle");
-            }
+            console.log("FIle uploaded");
+            alert("FIle uploaded");
+
 
         },
         error: function (err) {
             console.log(err);
         }
     })
+
+    // let fileInfo = {
+    //     "title": $('#title').val(),
+    //     "description": $('#description').val(),
+    //     "upload": $('#file').val(),
+    // };
+
+    // var title =  $('#title').val();
+    // var description =  $('#description').val();
+    // var file_data =  $('#file').prop('files')[0];
+    // var form_data = new FormData();
+    // form_data.append("file", file_data);
+    // form_data.append("title",title);
+    // form_data.append("description",description);
+
+    // $.ajax({
+    //     url: 'https://fileserverapi.herokuapp.com/fileUpload',
+    //     type: 'POST',
+    //     dataType: 'script',
+    //     Cache: false,
+    //     contentType: false,
+    //     processData: false,
+    //     data: form_data,
+        
+    //     // url: 'http://localhost:8080/fileUpload',
+    //     // type: 'POST',
+    //     // data: JSON.stringify(fileInfo),
+    //     // dataType: 'json',
+    //     // contentType: "application/json",
+    //     success: function(files) {
+    //         if (files.length !== 0) {
+    //             console.log(files);
+    //             let grid = $('#grid');
+    //             let gridContent = "";
+    //             files.forEach(file => {
+    //                 gridContent = `
+    //                 <div id="row" class="row">
+    //                     <div id="action_field" class="action_field"><p id="download_btn${file.fileId}" class="download_btn">Download</p><p id="send_email${file.fileId}" class="send_email">Email</p></div>
+    //                     <div id="title_field" class="title_field">${file.title}</div>
+    //                     <div id="file_name_field" class="file_name_field">${file.fileName}</div>
+    //                     <div id="description_field" class="description_field">${file.description}</div>
+    //                 </div>
+    //                 `;
+    //                 grid.append(gridContent);
+    //             });
+    //         }else{
+    //             alert("No such FIle");
+    //         }
+
+    //     },
+    //     error: function (err) {
+    //         console.log(err);
+    //     }
+    // })
 });
 
 

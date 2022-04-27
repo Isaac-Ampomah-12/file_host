@@ -51,6 +51,21 @@ body {
       color: white;
   }
 
+  #logo{
+    float: left;
+    margin-top: 20px;
+    margin-left: 20px;
+    text-decoration: none;
+    font-size: 30px;
+}
+
+  #logout{
+      float: right;
+      margin-top: 20px;
+      margin-right: 20px;
+      text-decoration: none;
+  }
+
   #search_section{
       width: 100%;
       height: 80px;

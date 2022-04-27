@@ -15,9 +15,8 @@ const nodemailer = require("nodemailer");
 const cors = require("cors");
 app.use(
   cors({
-      origin: "https://asdyyu.herokuapp.com"
-      // "http://127.0.0.1:5502",
-      // methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: "*"
+
   })
 )
 //  Import dbConnection
@@ -195,6 +194,10 @@ app.post('/forgotPassword',
           }else{
               // res.json(rows);
               // console.log(rows);
+              
+              rows.forEach(async row => {
+                console.log(row.username);
+              
 
               let transporter = nodemailer.createTransport({
                 // https://ethereal.email/
@@ -211,20 +214,52 @@ app.post('/forgotPassword',
                 from: '"The File Server" <info@fileserver.com>', // sender address
                 to: `${email}`, // list of receivers
                 subject: "Reset Password", // Subject line
-                text: `Copy and paste https://asdyyu.herokuapp.com/templates/resetpassword.html?email=${email} into your browser in order to rest your password`, // plain text body
+                text: `Dear ${row.username}, \nPlease copy and paste the link below into your browser in order to rest your password\nhttps://asdyyu.herokuapp.com/templates/resetpassword.html?email=${email}\nThank you`, // plain text body
                 
               };
               // send mail with defined transport object
               let info = await transporter.sendMail(msg);
             
-              console.log("Message sent: %s", info.messageId);
+              // console.log("Message sent: %s", info.messageId);
               // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
             
               // Preview only available when sending through an Ethereal account
-              console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+              // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
         
               console.log('Email Sent');
               res.json('Email sent');
+              // res.render('index');
+            });
+
+              // let transporter = nodemailer.createTransport({
+              //   // https://ethereal.email/
+              //   host: "smtp.ethereal.email",
+              //   port: 587,
+              //   secure: false, // true for 465, false for other ports
+              //   auth: {
+              //     user: 'gardner.littel10@ethereal.email', // generated ethereal user
+              //     pass: 'wuAQHdZaRu7Q7XcBqv', // generated ethereal password
+              //   },
+              // });
+            
+              // const msg = {
+              //   from: '"The File Server" <info@fileserver.com>', // sender address
+              //   to: `${email}`, // list of receivers
+              //   subject: "Reset Password", // Subject line
+              //   text: `Copy and paste https://asdyyu.herokuapp.com//templates/resetpassword.html?email=${email} into your browser in order to rest your password`, // plain text body
+              //   // html: `<p>Highlight the link below and click "go to to http://localhost:8080/ResetPassword?email=${email}" to reset your password</p> </br> <a>http://localhost:8080/ResetPassword</a>`, // html body
+              // };
+              // // send mail with defined transport object
+              // let info = await transporter.sendMail(msg);
+            
+              // console.log("Message sent: %s", info.messageId);
+              // // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+            
+              // // Preview only available when sending through an Ethereal account
+              // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        
+              // console.log('Email Sent');
+              // res.json('Email sent');
               // res.render('index');
           }
       });
@@ -288,7 +323,7 @@ app.post('/forgotPassword',
      if (req.files){
       console.log(req.files);
       
-      var file = req.files.upload;
+      var file = req.files.file;
       var filename = file.name;
       file.mv("./uploadedFiles/"+filename, async (err) => {
           if (err){
@@ -364,7 +399,7 @@ app.get('/allFiles', async (req, res) => {
           
       //   //  res.render('index', {items} );
       // }
-  });
+    });
    
 
   });
@@ -373,13 +408,36 @@ app.get('/allFiles', async (req, res) => {
 
   // File Download
   app.get("/fileDownload", async (req, res) => {
-    console.log("here");
-      const file = req.query;
-      const fileName = file.fileName;
-      console.log(fileName);
-      res.zip([
-        {path: `./uploadedFiles/confirm.png`, name: `${fileName}`}
+    
+    const {fileName, fileId} = req.query;
+    console.log(fileId);
+    console.log(fileName);
+
+    // if(file != undefined) {
+
+      // fileName = file.toString().split(",")[0];
+      // fileId = parseInt(file.toString().split(",")[1]);/
+
+    res.zip([
+      {path: `./uploadedFiles/${fileName}`, name: `${fileName}`}
     ]);
+
+    const query = `INSERT INTO downloads (downloadFile) VALUES (${fileId})`;
+
+    await db.run(query, (err,) => {
+      if(err) return console.error(err.message);
+      
+      console.log("saved")
+
+    });
+    
+    // console.log("here");
+    //   const file = req.query;
+    //   const fileName = file.fileName;
+    //   console.log(fileName);
+    //   res.zip([
+    //     {path: `./uploadedFiles/confirm.png`, name: `${fileName}`}
+    // ]);
 
     // console.log(req.body);
 
@@ -435,7 +493,7 @@ app.get('/allFiles', async (req, res) => {
       const msg = {
         from: '"The File Server" <info@fileserver.com>', // sender address
         to: `${recepientEmail}`, // list of receivers
-        subject: "Reset Password", // Subject line
+        subject: "Emailled file", // Subject line
         text: "Please find attatch your a file", // plain text body
         attachments: [
           {   // file on disk as an attachment
@@ -448,11 +506,11 @@ app.get('/allFiles', async (req, res) => {
       await transporter.sendMail(msg, async (err, info) => {
         if (err) console.error(err.message);
 
-        console.log("Message sent: %s", info.messageId);
+        // console.log("Message sent: %s", info.messageId);
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
         // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
         const query = `INSERT INTO emails (emailFile, emailAddr) VALUES (?,?)`;
         console.log(recepientEmail);
@@ -472,19 +530,55 @@ app.get('/allFiles', async (req, res) => {
 
   //file emailed count
   app.post('/fileEmailCount', async (req, res) => {
+
     const {fileId} = req.body;
     console.log(fileId);
-    const query = `SELECT count(*) AS fileCount FROM emails WHERE emailFile = ${fileId}`;
+    let emailDownloadCount = [];
+    const emailQuery = `SELECT count(*) AS emailCount FROM emails WHERE emailFile = ${fileId}`;
 
-    await db.all(query, (err, rows) => {
+    await db.all(emailQuery, async (err, rows) => {
       if(err) return console.error(err.message);
           
       rows.forEach(row => {
         console.log(row);
-        res.json(row);
+        // res.json(row);
+        // emailDownloadCount.emailCount = row;
+        emailDownloadCount.push(row);
+        console.log(emailDownloadCount);
       });
     
     });
+
+    const downloadQuery = `SELECT count(*) AS downloadCount FROM downloads WHERE downloadFile = ${fileId}`;
+
+    await db.all(downloadQuery, (err, rows) => {
+      if(err) return console.error(err.message);
+          
+      rows.forEach(row => {
+        console.log(row);
+        // res.json(row);
+        // emailDownloadCount.downloadCount = row;
+        emailDownloadCount.push(row);
+        console.log(emailDownloadCount);
+      });
+
+      res.json(emailDownloadCount);
+    
+    });
+
+    // const {fileId} = req.body;
+    // console.log(fileId);
+    // const query = `SELECT count(*) AS fileCount FROM emails WHERE emailFile = ${fileId}`;
+
+    // await db.all(query, (err, rows) => {
+    //   if(err) return console.error(err.message);
+          
+    //   rows.forEach(row => {
+    //     console.log(row);
+    //     res.json(row);
+    //   });
+    
+    // });
   });
 
 

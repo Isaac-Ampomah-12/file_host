@@ -19,7 +19,7 @@ const db = new sqlite3.Database("./database/files.db", sqlite3.OPEN_READWRITE, (
 // const sql = 'SELECT * FROM users';
 
 // Delete user
-db.run('DELETE FROM files WHERE fileId = 3');
+// db.run('DELETE FROM files WHERE fileId = 3');
 
 
 // db.all(sql, [], (err, rows) => {
